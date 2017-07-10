@@ -1,6 +1,5 @@
 #!/bin/sh
 
-#desktop
 mkdir android/dependencies/jni/gdxpp/build
 cd android/dependencies/jni/gdxpp/build
 cmake ..

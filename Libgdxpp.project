@@ -27,7 +27,9 @@
       <Compiler Options="-g" C_Options="-g" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
         <IncludePath Value="."/>
       </Compiler>
-      <Linker Options="" Required="yes"/>
+      <Linker Options="" Required="yes">
+        <Library Value="/home/colin/git/libgdxpp-template/android/dependencies/jni/gdxpp/build/libgdxpp.so"/>
+      </Linker>
       <ResourceCompiler Options="" Required="no"/>
       <General OutputFile="" IntermediateDirectory="./Debug" Command="/home/colin/git/libgdxpp-template/build/Core" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
       <BuildSystem Name="Default"/>
@@ -40,20 +42,18 @@
         <StartupCommands/>
       </Debugger>
       <PreBuild>
-        <Command Enabled="yes">mkdir build</Command>
-        <Command Enabled="yes">cd build</Command>
-        <Command Enabled="yes">cmake ..</Command>
-        <Command Enabled="yes">ln -s ../assets assets</Command>
-        <Command Enabled="yes">make</Command>
-        <Command Enabled="yes">./Core</Command>
+        <Command Enabled="no">#sh rebuildAndroid.sh</Command>
+        <Command Enabled="yes">sh rebuildDesktop.sh</Command>
         <Command Enabled="yes"/>
       </PreBuild>
-      <PostBuild/>
+      <PostBuild>
+        <Command Enabled="no">#adb shell am force-stop org.libsdl.app</Command>
+      </PostBuild>
       <CustomBuild Enabled="yes">
-        <Target Name="cmake-debug">cmake build</Target>
+        <Target Name="cmake-debug">sh rebuildAndroid.sh</Target>
         <RebuildCommand/>
         <CleanCommand>rm -rf build</CleanCommand>
-        <BuildCommand>make build</BuildCommand>
+        <BuildCommand>sh rebuildAndroid.sh</BuildCommand>
         <PreprocessFileCommand/>
         <SingleFileCommand/>
         <MakefileGenerationCommand/>

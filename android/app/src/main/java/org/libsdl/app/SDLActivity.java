@@ -1238,6 +1238,10 @@ class SDLSurface extends SurfaceView implements SurfaceHolder.Callback,
     // Key events
     @Override
     public boolean onKey(View  v, int keyCode, KeyEvent event) {
+if ((event.getSource() & InputDevice.SOURCE_GAMEPAD)
+                == InputDevice.SOURCE_GAMEPAD) {
+Log.v("SDL","GAMEPAD SOURCE");
+}
         // Dispatch the different events depending on where they come from
         // Some SOURCE_JOYSTICK, SOURCE_DPAD or SOURCE_GAMEPAD are also SOURCE_KEYBOARD
         // So, we try to process them as JOYSTICK/DPAD/GAMEPAD events first, if that fails we try them as KEYBOARD
@@ -1245,7 +1249,7 @@ class SDLSurface extends SurfaceView implements SurfaceHolder.Callback,
         // Furthermore, it's possible a game controller has SOURCE_KEYBOARD and
         // SOURCE_JOYSTICK, while its key events arrive from the keyboard source
         // So, retrieve the device itself and check all of its sources
-        if (SDLActivity.isDeviceSDLJoystick(event.getDeviceId())) {
+        if (SDLActivity.isDeviceSDLJoystick(event.getDeviceId())) {Log.v("SDL","IS JOYSTICK");
             // Note that we process events with specific key codes here
             if (event.getAction() == KeyEvent.ACTION_DOWN) {
                 if (SDLActivity.onNativePadDown(event.getDeviceId(), keyCode) == 0) {
@@ -1258,7 +1262,7 @@ class SDLSurface extends SurfaceView implements SurfaceHolder.Callback,
             }
         }
 
-        if ((event.getSource() & InputDevice.SOURCE_KEYBOARD) != 0) {
+        if ((event.getSource() & InputDevice.SOURCE_KEYBOARD) != 0) {Log.v("SDL","IS KEYBOARD");
             if (event.getAction() == KeyEvent.ACTION_DOWN) {
                 //Log.v("SDL", "key down: " + keyCode);
                 SDLActivity.onNativeKeyDown(keyCode);
@@ -1671,6 +1675,13 @@ class SDLJoystickHandler_API12 extends SDLJoystickHandler {
 
     @Override
     public boolean handleMotionEvent(MotionEvent event) {
+        if ((event.getSource() & InputDevice.SOURCE_JOYSTICK) ==
+                InputDevice.SOURCE_JOYSTICK &&
+                event.getAction() == MotionEvent.ACTION_MOVE) {
+Log.v("SDL","GAMEPAD SOURCE JOYSTICK: "+event.getAxisValue(MotionEvent.AXIS_LTRIGGER)+","+event.getAxisValue(MotionEvent.AXIS_RTRIGGER)+
+event.getAxisValue(MotionEvent.AXIS_THROTTLE)+","+event.getAxisValue(MotionEvent.AXIS_BRAKE)+
+event.getAxisValue(MotionEvent.AXIS_X)+","+event.getAxisValue(MotionEvent.AXIS_Y)+event.getAxisValue(MotionEvent.AXIS_Z)+","+event.getAxisValue(MotionEvent.AXIS_RZ));
+}
         if ((event.getSource() & InputDevice.SOURCE_JOYSTICK) != 0) {
             int actionPointerIndex = event.getActionIndex();
             int action = event.getActionMasked();

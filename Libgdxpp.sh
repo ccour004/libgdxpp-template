@@ -1,11 +1,6 @@
 
 echo Executing Pre Build commands ...
-mkdir build
-cd build
-cmake ..
-ln -s ../assets assets
-make
-./Core
+sh rebuildDesktop.sh
 
 echo Done
-make build
+sh rebuildAndroid.sh

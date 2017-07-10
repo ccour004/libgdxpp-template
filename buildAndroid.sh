@@ -16,7 +16,7 @@ rm SDL2_image.zip
 mv SDL2_image-2.0.1 SDL2_image
 
 #gdxpp
-git clone -b just_the_code https://github.com/ccour004/libgdxpp.git
+git clone -b input https://github.com/ccour004/libgdxpp.git
 mv libgdxpp gdxpp
 
 #2. Run ndk-build to generate shared object libraries.
