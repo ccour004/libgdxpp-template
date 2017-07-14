@@ -30,6 +30,8 @@ import android.media.*;
 import android.hardware.*;
 import android.content.pm.ActivityInfo;
 
+import android.content.res.Configuration;
+
 /**
     SDL Activity
 */
@@ -123,6 +125,8 @@ public class SDLActivity extends Activity {
         Log.v(TAG, "Model: " + android.os.Build.MODEL);
         Log.v(TAG, "onCreate(): " + mSingleton);
         super.onCreate(savedInstanceState);
+
+	//setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE);
 
         SDLActivity.initialize();
         // So we can call stuff from static callbacks
@@ -882,6 +886,11 @@ public class SDLActivity extends Activity {
         // return selected value
 
         return messageboxSelection[0];
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+         super.onConfigurationChanged(newConfig);
     }
 
     @Override

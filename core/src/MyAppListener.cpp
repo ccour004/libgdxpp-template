@@ -3,6 +3,8 @@
 #include <memory>
 #include <chrono>
 
+bool MyAppListener::isPaused = false;
+
 class MyRawInputProcessor: public RawInputProcessor{
 public:
     bool controllerAxisEvent(const SDL_ControllerAxisEvent& event){
@@ -59,15 +61,8 @@ static int TestThread(void *ptr){
     return MyAppListener::audioTest();
 }
 
-bool MyAppListener::create(){
-     if(isCreated) return true;
-        setRawInputProcessor(std::make_shared<MyRawInputProcessor>());
-        
-        //Audio creation test
-        SDL_CreateThread(TestThread, "TestThread", (void *)NULL);
-        //audioTest();
-        
-        //Texture creation test
+void MyAppListener::buildImage(){
+            //Texture creation test
         image = IMG_Load("assets/test.png");
         if(!image)
             SDL_Log("IMG_Load: %s\n",IMG_GetError());
@@ -92,8 +87,12 @@ bool MyAppListener::create(){
         
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-     
-        //Setup shader program.
+}
+
+bool MyAppListener::setup(){
+        setRawInputProcessor(std::make_shared<MyRawInputProcessor>());
+    
+            //Setup shader program.
         ShaderProgram::prependVertexCode = "#version 300 es\n";
         ShaderProgram::prependFragmentCode = "#version 300 es\n";
         shaderProgram.push_back(ShaderProgram(
@@ -102,7 +101,7 @@ bool MyAppListener::create(){
             fileToString("assets/alt.vert"),fileToString("assets/alt.frag"),"default"));
         shaderProgram.push_back(ShaderProgram(
             fileToString("assets/texTest.vert"),fileToString("assets/texTest.frag"),"default"));
-            
+        
         for(ShaderProgram program:shaderProgram)
             if(!program.isCompiled()) return false;
             
@@ -147,9 +146,32 @@ bool MyAppListener::create(){
         MeshBuilder::build(vertices,indices,2,2,2,20,20);
         meshes.push_back(std::make_shared<Mesh>(VERTEX_BUFFER_OBJECT,vertices,attr,
                     INDEX_BUFFER_OBJECT,indices,true,true));
+}
+
+bool MyAppListener::create(){
+    //Setup gl settings.
+    glEnable(GL_DEPTH_TEST);
+    glClearDepthf(1.0f);
+    glDepthFunc(GL_LEQUAL);
+    //glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
+    glClearColor( 0.66f, 0.66f, 0.66f, 1.f );
         
-        isCreated = true;
-        return true;
+    //Audio creation test
+    SDL_DetachThread(SDL_CreateThread(TestThread, "TestThread", (void *)NULL));
+        
+    buildImage();
+    setup();
+    return true;
+ }
+ 
+  void MyAppListener::pause(){
+     SDL_Log("ME PAUSE!");
+     isPaused = true;
+ }
+ 
+ void MyAppListener::resume(){
+     SDL_Log("ME RESUME!");
+     isPaused = false;
  }
  
   void MyAppListener::render(){
@@ -182,7 +204,7 @@ bool MyAppListener::create(){
 Uint8* MyAppListener::audio_pos;
 Uint32 MyAppListener::audio_len;
 
-    void my_audio_callback(void *userdata, Uint8 *stream, int len);
+ void my_audio_callback(void *userdata, Uint8 *stream, int len);
  
  bool MyAppListener::audioTest(){
      	// local variables
@@ -228,6 +250,8 @@ Uint32 MyAppListener::audio_len;
 
 	// wait until we're don't playing
 	while ( audio_len > 0 ) {
+        if(isPaused) SDL_PauseAudio(1);
+        else SDL_PauseAudio(0);
 		SDL_Delay(100); 
 	}
 	

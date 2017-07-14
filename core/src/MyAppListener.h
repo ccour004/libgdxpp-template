@@ -12,11 +12,14 @@
 
 class MyAppListener: public ApplicationListener{
     bool isCreated = false;
+    static bool isPaused;
     PerspectiveCamera camera;
     std::vector<ShaderProgram> shaderProgram;
     int counter = 0;
     
     //Texture/Image testing
+    void buildImage();
+    bool setup();
     SDL_Surface* image;
     GLuint tex;
     
@@ -36,8 +39,8 @@ public:
  bool create();
  void resize(int width, int height);
  void render();
- void pause(){}
- void resume(){}
+ void pause();
+ void resume();
  void dispose();
 };
 

@@ -1,0 +1,6 @@
+android/dependencies/jni/SDL2
+android/dependencies/jni/SDL2_image
+android/dependencies/jni/gdxpp
+android/dependencies/libs
+android/dependencies/obj
+build
