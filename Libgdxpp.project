@@ -12,6 +12,9 @@
     <File Name="core/src/MyAppListener.cpp"/>
     <File Name="core/src/main.cpp"/>
     <File Name="core/src/BulletSim.hpp"/>
+    <File Name="../cubist/core/src/GLMShader.hpp"/>
+    <File Name="../cubist/core/src/GLMVertices.hpp"/>
+    <File Name="../cubist/core/src/GLMShapeBuilder.hpp"/>
   </VirtualDirectory>
   <Settings Type="Executable">
     <GlobalSettings>

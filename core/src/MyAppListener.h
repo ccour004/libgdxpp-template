@@ -10,18 +10,17 @@
 #include <chrono>
 #include <memory>
 
+#include "/home/colin/git/cubist/android/dependencies/jni/gdxpp/src/graphics/Texture.h"
+
 class MyAppListener: public ApplicationListener{
     bool isCreated = false;
     static bool isPaused;
     PerspectiveCamera camera;
     std::vector<ShaderProgram> shaderProgram;
     int counter = 0;
+    Texture texture;
     
-    //Texture/Image testing
-    void buildImage();
     bool setup();
-    SDL_Surface* image;
-    GLuint tex;
     
     //Audio testing
     static Uint8 *audio_pos; // global pointer to the audio buffer to be played

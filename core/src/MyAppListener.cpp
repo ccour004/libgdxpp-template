@@ -61,38 +61,23 @@ static int TestThread(void *ptr){
     return MyAppListener::audioTest();
 }
 
-void MyAppListener::buildImage(){
-            //Texture creation test
-        image = IMG_Load("assets/test.png");
-        if(!image)
-            SDL_Log("IMG_Load: %s\n",IMG_GetError());
-            
-        glEnable (GL_BLEND); glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        
-        int format = GL_RGB;
-        switch(image->format->BytesPerPixel){
-            case 3: format = GL_RGB; break;
-            case 4: format = GL_RGBA; break;
-        }
-        
-        SDL_Log("FORMAT: %i (%i,%i,%i,%i)",image->format->BytesPerPixel,image->format->Rmask,image->format->Gmask,image->format->Bmask,image->format->Amask);
-            
-        glGenTextures(1, &tex);
-        glBindTexture(GL_TEXTURE_2D, tex);
-        
-        glTexImage2D(GL_TEXTURE_2D, 0, format, image->w, image->h, 0, format, GL_UNSIGNED_BYTE, image->pixels);
-        
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-        
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-}
-
 bool MyAppListener::setup(){
+        //Setup gl settings.
+        glEnable(GL_DEPTH_TEST);
+        glClearDepthf(1.0f);
+        glDepthFunc(GL_LEQUAL);
+        //glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
+        glClearColor( 0.66f, 0.66f, 0.66f, 1.f );
+        
+        //Build texture and setup blending.
+        texture = Texture("assets/test.png",GL_NEAREST,GL_NEAREST,GL_REPEAT,GL_REPEAT);
+        glEnable (GL_BLEND);
+        glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    
+        //Set input processor.
         setRawInputProcessor(std::make_shared<MyRawInputProcessor>());
     
-            //Setup shader program.
+        //Setup shader program.
         ShaderProgram::prependVertexCode = "#version 300 es\n";
         ShaderProgram::prependFragmentCode = "#version 300 es\n";
         shaderProgram.push_back(ShaderProgram(
@@ -149,28 +134,20 @@ bool MyAppListener::setup(){
 }
 
 bool MyAppListener::create(){
-    //Setup gl settings.
-    glEnable(GL_DEPTH_TEST);
-    glClearDepthf(1.0f);
-    glDepthFunc(GL_LEQUAL);
-    //glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
-    glClearColor( 0.66f, 0.66f, 0.66f, 1.f );
-        
     //Audio creation test
-    SDL_DetachThread(SDL_CreateThread(TestThread, "TestThread", (void *)NULL));
-        
-    buildImage();
+    //SDL_DetachThread(SDL_CreateThread(TestThread, "TestThread", (void *)NULL));
+    
     setup();
     return true;
  }
  
   void MyAppListener::pause(){
-     SDL_Log("ME PAUSE!");
+     //SDL_Log("ME PAUSE!");
      isPaused = true;
  }
  
  void MyAppListener::resume(){
-     SDL_Log("ME RESUME!");
+     //SDL_Log("ME RESUME!");
      isPaused = false;
  }
  
@@ -190,7 +167,7 @@ bool MyAppListener::create(){
     //
     shaderProgram[1].begin();
     shaderProgram[1].setUniformMatrix("u_projView",camera.combined);
-    meshes[1]->render(shaderProgram[1],GL_TRIANGLES);
+    meshes[/*1*/0]->render(shaderProgram[1],GL_TRIANGLES);
     shaderProgram[1].end();
     
     //
@@ -286,5 +263,5 @@ void MyAppListener::my_audio_callback(void *userdata, Uint8 *stream, int len) {
  
  void MyAppListener::dispose(){
      SDL_Log("DISPOSE CALLED!");
-     delete image;
+     delete texture;
  }
